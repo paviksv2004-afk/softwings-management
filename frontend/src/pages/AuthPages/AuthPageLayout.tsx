@@ -1,7 +1,5 @@
 import React from "react";
-import GridShape from "../../components/common/GridShape";
-import { Link } from "react-router";
-import ThemeTogglerTwo from "../../components/common/ThemeTogglerTwo";
+import { Link } from "react-router-dom";
 
 export default function AuthLayout({
   children,
@@ -14,26 +12,31 @@ export default function AuthLayout({
         {children}
         <div className="items-center hidden w-full h-full lg:w-1/2 bg-brand-950 dark:bg-white/5 lg:grid">
           <div className="relative flex items-center justify-center z-1">
-            {/* <!-- ===== Common Grid Shape Start ===== --> */}
-            <GridShape />
+            {/* GridShape removed */}
+            
             <div className="flex flex-col items-center max-w-xs">
               <Link to="/" className="block mb-4">
-                <img
-                  width={231}
-                  height={48}
-                  src="/images/logo/auth-logo.svg"
-                  alt="Logo"
-                />
+                {/* Logo and Text side by side */}
+                <div className="flex items-center gap-3">
+                  <img
+                    width={40}
+                    height={40}
+                    src="/images/logo/softwings-logo.png"
+                    alt="SoftWings"
+                  />
+                  {/* White color text */}
+                  <span className="text-2xl font-semibold text-white">
+                    SoftWings
+                  </span>
+                </div>
               </Link>
-              <p className="text-center text-gray-400 dark:text-white/60">
+              <p className="text-center text-gray-400 dark:text-white/60 mt-4">
                 Free and Open-Source Tailwind CSS Admin Dashboard Template
               </p>
             </div>
           </div>
         </div>
-        <div className="fixed z-50 hidden bottom-6 right-6 sm:block">
-          <ThemeTogglerTwo />
-        </div>
+        {/* ✅ ThemeTogglerTwo COMPLETELY REMOVED - bottom right corner la irundhadhu pochu */}
       </div>
     </div>
   );

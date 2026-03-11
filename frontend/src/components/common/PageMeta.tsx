@@ -1,20 +1,17 @@
-import { HelmetProvider, Helmet } from "react-helmet-async";
+import { Helmet } from 'react-helmet-async';
 
-const PageMeta = ({
-  title,
-  description,
-}: {
-  title: string;
-  description: string;
-}) => (
-  <Helmet>
-    <title>{title}</title>
-    <meta name="description" content={description} />
-  </Helmet>
-);
+interface PageMetaProps {
+  title?: string;
+  description?: string;
+}
 
-export const AppWrapper = ({ children }: { children: React.ReactNode }) => (
-  <HelmetProvider>{children}</HelmetProvider>
-);
+const PageMeta = ({ title, description }: PageMetaProps) => {
+  return (
+    <Helmet>
+      <title>{title ? `${title} | SoftWings` : 'SoftWings Management'}</title>
+      <meta name="description" content={description || 'SoftWings Management System'} />
+    </Helmet>
+  );
+};
 
 export default PageMeta;

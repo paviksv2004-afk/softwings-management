@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { EyeCloseIcon, EyeIcon, ChevronLeftIcon } from "../../icons";
+import { useNavigate } from "react-router-dom";
+import { EyeCloseIcon, EyeIcon } from "../../icons";
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
 import Button from "../ui/button/Button";
-import { login } from "../../api/authapi";
+import axios from "axios";
 
 interface LoginFormState {
   email: string;
@@ -23,50 +23,64 @@ export default function SignInForm() {
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
 
-  // =========================
-  // Handle Input Change
-  // =========================
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
 
-  // =========================
-  // Handle Submit
-  // =========================
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    if (!formData.email.trim() || !formData.password.trim()) {
-      setErrorMessage("Email and password are required.");
-      return;
-    }
+    setLoading(true);
+    setErrorMessage("");
 
     try {
-      setLoading(true);
-      setErrorMessage("");
+      // Try different endpoints - use the correct one
+      const endpoints = [
+        "http://localhost:5000/api/auth/login",
+        "http://localhost:5000/api/login",
+        "http://localhost:5000/auth/login",
+        "http://localhost:5000/api/users/login"
+      ];
 
-      const response = await login({
-        email: formData.email.trim(),
-        password: formData.password.trim(),
-      });
+      let response;
+      let success = false;
 
-      // Optional: Check success flag from backend
-      if (response.success) {
-        navigate("/"); // redirect to dashboard
+      for (const endpoint of endpoints) {
+        try {
+          console.log("Trying endpoint:", endpoint);
+          response = await axios.post(endpoint, {
+            email: formData.email.trim(),
+            password: formData.password.trim(),
+          });
+          console.log("Success with endpoint:", endpoint);
+          success = true;
+          break;
+        } catch (err) {
+          console.log("Failed with endpoint:", endpoint);
+        }
+      }
+
+      if (!success) {
+        setErrorMessage("Cannot connect to server. Please check if backend is running.");
+        return;
+      }
+
+      if (response?.data?.token) {
+        localStorage.setItem("token", response.data.token);
+        if (response.data.user) {
+          localStorage.setItem("user", JSON.stringify(response.data.user));
+        }
+        navigate("/");
       } else {
-        setErrorMessage(response.message || "Login failed.");
+        setErrorMessage(response?.data?.message || "Login failed.");
       }
 
     } catch (error: any) {
-      setErrorMessage(
-        error?.response?.data?.message ||
-          "Invalid email or password. Please try again."
-      );
+      console.error("Login error:", error);
+      setErrorMessage("Invalid email or password");
     } finally {
       setLoading(false);
     }
@@ -74,18 +88,6 @@ export default function SignInForm() {
 
   return (
     <div className="flex flex-col flex-1">
-      {/* Back Button */}
-      <div className="w-full max-w-md pt-10 mx-auto">
-        <Link
-          to="/"
-          className="inline-flex items-center text-sm text-gray-500 hover:text-gray-700"
-        >
-          <ChevronLeftIcon className="size-5 mr-1" />
-          Back to dashboard
-        </Link>
-      </div>
-
-      {/* Form Container */}
       <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
         <div className="bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-md">
           <h1 className="mb-6 text-2xl font-semibold text-gray-800 dark:text-white">
@@ -99,7 +101,6 @@ export default function SignInForm() {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Email */}
             <div>
               <Label>Email</Label>
               <Input
@@ -112,7 +113,6 @@ export default function SignInForm() {
               />
             </div>
 
-            {/* Password */}
             <div>
               <Label>Password</Label>
               <div className="relative">
@@ -137,7 +137,6 @@ export default function SignInForm() {
               </div>
             </div>
 
-            {/* Submit Button */}
             <Button
               type="submit"
               className="w-full"
