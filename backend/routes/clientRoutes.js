@@ -2,14 +2,6 @@ const express = require('express');
 const router = express.Router();
 const Client = require('../models/client');
 
-// ✅ Add auth middleware (with capital M - matches your folder)
-const authMiddleware = require('../Middleware/authMiddleware');
-
-// =====================
-// Protected Routes (All routes below require authentication)
-// =====================
-router.use(authMiddleware);  // Apply auth to all routes
-
 // GET all clients
 router.get('/', async (req, res) => {
   try {
@@ -48,7 +40,7 @@ router.post('/', async (req, res) => {
   try {
     console.log('📝 Creating new client:', req.body.companyName);
     
-    const client = new Client(req.body);
+    const client = new client(req.body);
     const newClient = await client.save();
     
     console.log('✅ Client created with ID:', newClient._id);
@@ -64,7 +56,7 @@ router.put('/:id', async (req, res) => {
   try {
     console.log('✏️ Updating client with ID:', req.params.id);
     
-    const client = await Client.findByIdAndUpdate(
+    const client = await client.findByIdAndUpdate(
       req.params.id,
       req.body,
       { new: true, runValidators: true }
@@ -75,7 +67,7 @@ router.put('/:id', async (req, res) => {
       return res.status(404).json({ message: 'Client not found' });
     }
     
-    console.log('✅ Client updated:', client.companyName);
+    console.log('✅ client updated:', client.companyName);
     res.json(client);
   } catch (error) {
     console.error('❌ Error updating client:', error);
@@ -91,12 +83,12 @@ router.delete('/:id', async (req, res) => {
     const client = await Client.findByIdAndDelete(req.params.id);
     
     if (!client) {
-      console.log('❌ Client not found for deletion with ID:', req.params.id);
-      return res.status(404).json({ message: 'Client not found' });
+      console.log('❌ client not found for deletion with ID:', req.params.id);
+      return res.status(404).json({ message: 'client not found' });
     }
     
-    console.log('✅ Client deleted:', client.companyName);
-    res.json({ message: 'Client deleted successfully' });
+    console.log('✅ client deleted:', client.companyName);
+    res.json({ message: 'client deleted successfully' });
   } catch (error) {
     console.error('❌ Error deleting client:', error);
     res.status(500).json({ message: error.message });
