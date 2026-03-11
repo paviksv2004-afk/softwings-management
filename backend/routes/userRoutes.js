@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 
-// ✅ FIXED: Changed 'Middleware' to 'middleware' (lowercase)
-const authorizeRoles = require('../middleware/roleMiddleware');
-const authMiddleware = require('../middleware/authMiddleware');
+// IMPORTANT: Using 'Middleware' with capital M (matches your folder name)
+const authorizeRoles = require('../Middleware/roleMiddleware');
+const authMiddleware = require('../Middleware/authMiddleware');
 
 const {
     registerUser,
