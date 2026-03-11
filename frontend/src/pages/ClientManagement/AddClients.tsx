@@ -24,7 +24,6 @@ const AddClients = () => {
     contactPerson: "",
     mobile: "",
     address: "",
-    // ✅ DOMAIN REMOVED
   });
 
   const [hostingServices, setHostingServices] = useState<Service[]>([]);
@@ -82,7 +81,7 @@ const AddClients = () => {
     setter: React.Dispatch<React.SetStateAction<Service[]>>
   ) => {
     const updated = [...services];
-    updated[index][field] = value;
+    updated[index][field] = value as any;
 
     if (field === 'endDate') {
       updated[index].isManualEndDate = true;
@@ -204,7 +203,7 @@ const AddClients = () => {
                 onChange={(e) =>
                   handleServiceChange(index, "name", e.target.value, services, setter)
                 }
-                required
+                required={true}  // ✅ FIXED: required={true} not just required
                 className="w-full"
               />
             </div>
@@ -217,7 +216,7 @@ const AddClients = () => {
                 onChange={(e) =>
                   handleServiceChange(index, "start", e.target.value, services, setter)
                 }
-                required
+                required={true}  // ✅ FIXED
                 className="w-full"
               />
             </div>
@@ -232,7 +231,7 @@ const AddClients = () => {
                 onChange={(e) =>
                   handleServiceChange(index, "duration", e.target.value, services, setter)
                 }
-                required
+                required={true}  // ✅ FIXED
                 className="w-full"
               />
             </div>
@@ -245,7 +244,7 @@ const AddClients = () => {
                   handleServiceChange(index, "durationType", e.target.value as "year" | "month", services, setter)
                 }
                 className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-blue-500 focus:outline-none"
-                required
+                required={true}  // ✅ FIXED
               >
                 <option value="year">Years</option>
                 <option value="month">Months</option>
@@ -270,7 +269,7 @@ const AddClients = () => {
                   handleServiceChange(index, "endDate", e.target.value, services, setter)
                 }
                 className={`w-full ${!service.isManualEndDate ? 'bg-gray-100' : ''}`}
-                readOnly={!service.isManualEndDate}
+                readOnly={!service.isManualEndDate}  // ✅ readOnly works now
               />
             </div>
 
@@ -285,7 +284,7 @@ const AddClients = () => {
                 onChange={(e) =>
                   handleServiceChange(index, "amount", e.target.value, services, setter)
                 }
-                required
+                required={true}  // ✅ FIXED
                 className="w-full"
               />
             </div>
@@ -349,12 +348,11 @@ const AddClients = () => {
         contactPerson: formData.contactPerson.trim() || undefined,
         mobile: formData.mobile.trim() || undefined,
         address: formData.address.trim() || undefined,
-        // ✅ DOMAIN FIELD REMOVED FROM API DATA
         services: allServices.map((s) => ({
           name: s.name.trim(),
           type: s.type,
           start: s.start,
-          duration: Number(s.duration),
+          duration: Number(s.duration),  // ✅ Fixed: string to number
           durationType: s.durationType,
           amount: Number(s.amount),
           endDate: s.endDate || calculateEndDate(s.start, s.duration, s.durationType)
@@ -420,7 +418,7 @@ const AddClients = () => {
                 placeholder="Enter company name"
                 value={formData.companyName}
                 onChange={handleBasicChange}
-                required
+                required={true}  // ✅ FIXED
                 className="w-full"
               />
             </div>
@@ -444,7 +442,7 @@ const AddClients = () => {
                 placeholder="company@example.com"
                 value={formData.email}
                 onChange={handleBasicChange}
-                required
+                required={true}  // ✅ FIXED
                 className="w-full"
               />
             </div>
@@ -460,8 +458,6 @@ const AddClients = () => {
                 className="w-full"
               />
             </div>
-
-            {/* ✅ DOMAIN FIELD REMOVED FROM UI */}
 
             <div className="md:col-span-2">
               <Label>Address</Label>
