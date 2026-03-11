@@ -93,5 +93,4 @@ export const Modal: React.FC<ModalProps> = ({
   );
 };
 
-// Default export also add pannalam (optional)
 export default Modal;
