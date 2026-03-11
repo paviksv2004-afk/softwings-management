@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Client = require('../models/Client');
+const Client = require('../models/client');
 
 // ✅ Add auth middleware (with capital M - matches your folder)
 const authMiddleware = require('../Middleware/authMiddleware');
