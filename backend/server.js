@@ -19,12 +19,13 @@ app.use(express.json());
 // -------------------------
 const userRoutes = require("./routes/userRoutes");
 const clientRoutes = require('./routes/clientRoutes');
+const renewalRoutes = require("./routes/renewalRoutes");
 
 // Mount routes
 app.use("/api/users", userRoutes);
-app.use("/api/clients", clientRoutes);  // Client management
-const renewalRoutes = require("./routes/renewalRoutes");
+app.use("/api/clients", clientRoutes);
 app.use("/api/renewals", renewalRoutes);
+
 // -------------------------
 // Test Route
 // -------------------------
@@ -43,8 +44,8 @@ mongoose
   .then(() => {
     console.log("MongoDB connected successfully");
 
-    // Start the server
-    app.listen(PORT, () => {
+    // CRITICAL for Render: Add '0.0.0.0'
+    app.listen(PORT, '0.0.0.0', () => {
       console.log(`Server running on port ${PORT}`);
     });
   })
@@ -58,5 +59,11 @@ mongoose
 // -------------------------
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).json({ success: false, message: "Server Error" });
+
+  const statusCode = res.statusCode !== 200 ? res.statusCode : 500;
+  res.status(statusCode).json({
+    success: false,
+    message: err.message || "Server Error",
+    stack: process.env.NODE_ENV === "production" ? null : err.stack,
+  });
 });

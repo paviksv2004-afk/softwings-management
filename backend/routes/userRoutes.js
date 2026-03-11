@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-// IMPORTANT: Using 'Middleware' with capital M (matches your folder name)
+// Using 'Middleware' with capital M (matches your folder)
 const authorizeRoles = require('../Middleware/roleMiddleware');
 const authMiddleware = require('../Middleware/authMiddleware');
 

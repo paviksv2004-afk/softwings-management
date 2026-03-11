@@ -1,39 +1,28 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-// ================= Individual Service Schema =================
-const individualServiceSchema = new mongoose.Schema({
-  name: { type: String, required: true }, // Plan name or domain name
-  duration: { type: Number, required: true }, // in years
-  startDate: { type: Date, required: true },
-  expiryDate: { type: Date, required: true },
+const serviceSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  type: { type: String, required: true, enum: ['hosting', 'domain', 'ssl', 'amc'] },
+  start: { type: String, required: true },
+  duration: { type: Number, required: true },
+  durationType: { type: String, enum: ['year', 'month'], required: true },
   amount: { type: Number, required: true },
+  endDate: { type: String, required: true }
 });
 
-// ================= Services Schema =================
-const servicesSchema = new mongoose.Schema({
-  hosting: [individualServiceSchema],
-  domain: [individualServiceSchema],
-  ssl: [individualServiceSchema],
-  amc: [individualServiceSchema],
+const clientSchema = new mongoose.Schema({
+  companyName: { type: String, required: true },
+  email: { type: String, required: true },
+  contactPerson: { type: String },
+  mobile: { type: String },
+  address: { type: String },
+  services: [serviceSchema],
+  totalAmount: { type: Number, default: 0 }
+}, {
+  timestamps: true
 });
 
-// ================= Client Schema =================
-const clientSchema = new mongoose.Schema(
-  {
-    companyName: { type: String, required: true },
-    contactPerson: { type: String, required: true },
-    mobile: { type: String, required: true },
-    email: { type: String, required: true },
-    address: { type: String, required: true },
+// Check if model already exists before creating
+const Client = mongoose.models.Client || mongoose.model('Client', clientSchema);
 
-    services: servicesSchema,
-
-    totalAmount: { type: Number, required: true },
-  },
-  { timestamps: true }
-);
-
-// ✅ Prevent OverwriteModelError
-module.exports =
-  mongoose.models.Client ||
-  mongoose.model("Client", clientSchema);
+module.exports = Client;
