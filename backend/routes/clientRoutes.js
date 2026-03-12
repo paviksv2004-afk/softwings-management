@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Client = require('../models/client');
+const Client = require('../models/Client'); // ✅ Capital 'C' - matches filename
 
 // GET all clients
 router.get('/', async (req, res) => {
@@ -40,11 +40,11 @@ router.post('/', async (req, res) => {
   try {
     console.log('📝 Creating new client:', req.body.companyName);
     
-    const client = new client(req.body);
-    const newClient = await client.save();
+    const newClient = new Client(req.body); // ✅ Use Client (uppercase)
+    const savedClient = await newClient.save();
     
-    console.log('✅ Client created with ID:', newClient._id);
-    res.status(201).json(newClient);
+    console.log('✅ Client created with ID:', savedClient._id);
+    res.status(201).json(savedClient);
   } catch (error) {
     console.error('❌ Error creating client:', error);
     res.status(400).json({ message: error.message });
@@ -56,19 +56,19 @@ router.put('/:id', async (req, res) => {
   try {
     console.log('✏️ Updating client with ID:', req.params.id);
     
-    const client = await client.findByIdAndUpdate(
+    const updatedClient = await Client.findByIdAndUpdate( // ✅ Client (uppercase)
       req.params.id,
       req.body,
       { new: true, runValidators: true }
     );
     
-    if (!client) {
+    if (!updatedClient) {
       console.log('❌ Client not found for update with ID:', req.params.id);
       return res.status(404).json({ message: 'Client not found' });
     }
     
-    console.log('✅ client updated:', client.companyName);
-    res.json(client);
+    console.log('✅ Client updated:', updatedClient.companyName);
+    res.json(updatedClient);
   } catch (error) {
     console.error('❌ Error updating client:', error);
     res.status(400).json({ message: error.message });
@@ -80,15 +80,15 @@ router.delete('/:id', async (req, res) => {
   try {
     console.log('🗑️ Deleting client with ID:', req.params.id);
     
-    const client = await Client.findByIdAndDelete(req.params.id);
+    const deletedClient = await Client.findByIdAndDelete(req.params.id); // ✅ Client (uppercase)
     
-    if (!client) {
-      console.log('❌ client not found for deletion with ID:', req.params.id);
-      return res.status(404).json({ message: 'client not found' });
+    if (!deletedClient) {
+      console.log('❌ Client not found for deletion with ID:', req.params.id);
+      return res.status(404).json({ message: 'Client not found' });
     }
     
-    console.log('✅ client deleted:', client.companyName);
-    res.json({ message: 'client deleted successfully' });
+    console.log('✅ Client deleted:', deletedClient.companyName);
+    res.json({ message: 'Client deleted successfully' });
   } catch (error) {
     console.error('❌ Error deleting client:', error);
     res.status(500).json({ message: error.message });
