@@ -29,8 +29,8 @@ const Profit = () => {
       
       const token = localStorage.getItem("token");
       
-      // Use environment variable with fallback
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+      // 🔥 FIXED: Hardcoded Render URL for testing
+      const API_URL = 'https://softwings-management-1.onrender.com/api';
       
       console.log("Fetching from:", API_URL); // Debug log
       
