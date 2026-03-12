@@ -4,6 +4,7 @@ import PageMeta from "../components/common/PageMeta";
 
 const Profit = () => {
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [profitData, setProfitData] = useState({
     totalRevenue: 0,
     totalExpenses: 0,
@@ -24,13 +25,20 @@ const Profit = () => {
   const fetchProfitData = async () => {
     try {
       setLoading(true);
+      setError(null);
+      
       const token = localStorage.getItem("token");
       
+      // Use environment variable with fallback
       const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+      
+      console.log("Fetching from:", API_URL); // Debug log
       
       const clientsRes = await axios.get(`${API_URL}/clients`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {}
       });
+      
+      console.log("Clients data:", clientsRes.data); // Debug log
       
       const clients = clientsRes.data;
       
@@ -42,18 +50,19 @@ const Profit = () => {
         
         const services = Array.isArray(client.services) ? client.services : [];
         services.forEach((service: any) => {
+          const amount = Number(service.amount) || 0;
           switch(service.type) {
             case 'hosting':
-              hostingRevenue += service.amount || 0;
+              hostingRevenue += amount;
               break;
             case 'domain':
-              domainRevenue += service.amount || 0;
+              domainRevenue += amount;
               break;
             case 'ssl':
-              sslRevenue += service.amount || 0;
+              sslRevenue += amount;
               break;
             case 'amc':
-              amcRevenue += service.amount || 0;
+              amcRevenue += amount;
               break;
           }
         });
@@ -76,8 +85,9 @@ const Profit = () => {
         yearlyGrowth: 28.3
       });
 
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error fetching profit data:", error);
+      setError(error.message || "Failed to fetch data");
     } finally {
       setLoading(false);
     }
@@ -91,6 +101,31 @@ const Profit = () => {
     );
   }
 
+  if (error) {
+    return (
+      <div className="p-6 max-w-7xl mx-auto">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+          <p className="text-red-600 mb-4">❌ Error: {error}</p>
+          <button
+            onClick={fetchProfitData}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(value);
+  };
+
   return (
     <>
       <PageMeta
@@ -98,7 +133,7 @@ const Profit = () => {
         description="Track your revenue, expenses, and profit margins"
       />
 
-      <div className="space-y-6">
+      <div className="p-6 max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
           <h1 className="text-2xl font-bold text-gray-800">Profit & Analytics</h1>
@@ -110,19 +145,19 @@ const Profit = () => {
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
             <div className="text-sm text-gray-500">Total Revenue</div>
             <div className="text-2xl font-bold text-gray-800 mt-1">
-              ?{profitData.totalRevenue.toLocaleString('en-IN')}
+              {formatCurrency(profitData.totalRevenue)}
             </div>
           </div>
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
             <div className="text-sm text-gray-500">Total Expenses</div>
             <div className="text-2xl font-bold text-red-600 mt-1">
-              ?{profitData.totalExpenses.toLocaleString('en-IN')}
+              {formatCurrency(profitData.totalExpenses)}
             </div>
           </div>
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
             <div className="text-sm text-gray-500">Net Profit</div>
             <div className="text-2xl font-bold text-blue-600 mt-1">
-              ?{profitData.netProfit.toLocaleString('en-IN')}
+              {formatCurrency(profitData.netProfit)}
             </div>
           </div>
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
@@ -146,17 +181,30 @@ const Profit = () => {
               <div key={item.name}>
                 <div className="flex justify-between text-sm">
                   <span>{item.name}</span>
-                  <span>?{item.value.toLocaleString('en-IN')}</span>
+                  <span>{formatCurrency(item.value)}</span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
                   <div 
-                    className={`${item.color} h-2 rounded-full`} 
+                    className={`${item.color} h-2 rounded-full transition-all duration-300`} 
                     style={{ width: `${profitData.totalRevenue > 0 ? (item.value / profitData.totalRevenue) * 100 : 0}%` }}
                   ></div>
                 </div>
               </div>
             ))}
           </div>
+        </div>
+
+        {/* Refresh Button */}
+        <div className="flex justify-end">
+          <button
+            onClick={fetchProfitData}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            Refresh Data
+          </button>
         </div>
       </div>
     </>
