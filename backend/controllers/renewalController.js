@@ -1,4 +1,5 @@
-const Client = require("../models/client.js");
+const Client = require("../models/Client");  // 🔥 FIXED: uppercase C
+
 exports.getRenewals = async (req, res) => {
   try {
     const clients = await Client.find();
