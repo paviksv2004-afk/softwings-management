@@ -1,15 +1,15 @@
-import { Helmet } from 'react-helmet-async';
+﻿import { Helmet } from 'react-helmet';
 
 interface PageMetaProps {
-  title?: string;
-  description?: string;
+  title: string;
+  description: string;
 }
 
 const PageMeta = ({ title, description }: PageMetaProps) => {
   return (
     <Helmet>
-      <title>{title ? `${title} | SoftWings` : 'SoftWings Management'}</title>
-      <meta name="description" content={description || 'SoftWings Management System'} />
+      <title>{title}</title>
+      <meta name="description" content={description} />
     </Helmet>
   );
 };
