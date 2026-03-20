@@ -12,5 +12,17 @@ export default defineConfig({
   server: {
     port: 5173,
     open: true
-  }
+  },
+  // Add this build configuration
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+    sourcemap: false,
+    rollupOptions: {
+      output: {
+        manualChunks: undefined
+      }
+    }
+  },
+  base: './' // This helps with relative paths
 })
