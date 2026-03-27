@@ -11,9 +11,31 @@ export default defineConfig({
   ],
   server: {
     port: 5173,
-    open: true
+    open: true,
+    proxy: {
+      // Proxy API requests to backend during development
+      '/api': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+        secure: false
+      },
+      '/users': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+        secure: false
+      },
+      '/clients': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+        secure: false
+      },
+      '/renewals': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+        secure: false
+      }
+    }
   },
-  // Add this build configuration
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
@@ -24,5 +46,7 @@ export default defineConfig({
       }
     }
   },
-  base: './' // This helps with relative paths
+  base: './',
+  // Environment variables prefix
+  envPrefix: 'VITE_'
 })
