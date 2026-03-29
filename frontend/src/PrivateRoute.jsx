@@ -6,7 +6,7 @@ const PrivateRoute = ({ children }) => {
   const loggedIn = isLoggedIn();
   
   if (!loggedIn) {
-    console.log('PrivateRoute check - No token, redirecting to /signin');
+    console.log('No token found - Redirecting to /signin');
     return <Navigate to="/signin" replace />;
   }
   
