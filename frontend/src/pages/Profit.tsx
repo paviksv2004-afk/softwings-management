@@ -101,7 +101,6 @@ const Profit: React.FC = () => {
 
   // Growth metrics based on selected period
   const monthlyGrowth = 12.5;
-  const yearlyGrowth = 28.3;
   const projectedAnnual = netProfit * 12;
 
   // Average per client
